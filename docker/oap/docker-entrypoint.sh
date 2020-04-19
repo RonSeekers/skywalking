@@ -1,3 +1,4 @@
+#!/bin/bash
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -13,8 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-#!/bin/bash
 
 set -e
 
@@ -41,6 +40,12 @@ do
     CLASSPATH="$i:$CLASSPATH"
 done
 
+set +e
+
+if java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -version; then
+  JAVA_OPTS="${JAVA_OPTS} -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+fi
+
 set -ex
-exec java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap \
-     ${JAVA_OPTS} -classpath ${CLASSPATH} org.apache.skywalking.oap.server.starter.OAPServerStartUp "$@"
+
+exec java "${JAVA_OPTS}" -classpath "${CLASSPATH}" org.apache.skywalking.oap.server.starter.OAPServerStartUp "$@"

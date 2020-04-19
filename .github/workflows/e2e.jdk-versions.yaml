@@ -47,6 +47,8 @@ jobs:
           git submodule sync --recursive
           git -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Build Docker Image
+        env:
+          JAVA_VERSION: ${{ matrix.jdk }}
         run: make docker
       - name: Copy dist package
         run: cp -R dist test/e2e/
